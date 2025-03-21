@@ -18,7 +18,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Copy the jar file from the build stage
-COPY --from=build /app/target/*.jar /app/app.jar
+COPY --from=build /app/target/spring-app*.jar /app/app.jar
 
 # Expose the port the application runs on
 EXPOSE 8080
