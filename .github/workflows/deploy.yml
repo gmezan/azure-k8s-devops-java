@@ -13,7 +13,6 @@ on:
     paths:
       - src/**
       - pom.xml
-      - '*.yaml'
 
 env:
   CONTAINER_REGISTRY_NAME: gmezanregistry001
@@ -41,7 +40,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots clean install
   ci:
     name: Continuous Integration
-    #if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -68,7 +67,6 @@ jobs:
               --platform linux
   cd:
     name: Continuous Delivery
-    #if: github.ref == 'refs/heads/main'
     environment: azure
     runs-on: ubuntu-latest
     needs: ci
