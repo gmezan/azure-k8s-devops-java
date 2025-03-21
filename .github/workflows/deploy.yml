@@ -17,7 +17,6 @@ on:
 
 env:
   CONTAINER_REGISTRY_NAME: gmezanregistry001
-  CHART_PATH: ./chart
   RELEASE_NAME: spring-app
 
 jobs:
@@ -93,7 +92,7 @@ jobs:
           renderEngine: 'helm'
           releaseName: ${{ env.RELEASE_NAME }}
           namespace: ${{ env.CLUSTER_NAMESPACE }}
-          helmChart: ${{ env.CHART_PATH }}
+          helmChart: ./chart
           overrideFiles: './azure.yaml'
           overrides: |
             image.repository: ${{ env.CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.RELEASE_NAME }}
