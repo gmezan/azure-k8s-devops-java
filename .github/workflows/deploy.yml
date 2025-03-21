@@ -14,6 +14,11 @@ on:
       - src/**
       - pom.xml
 
+env:
+  CONTAINER_REGISTRY_NAME: gmezanregistry001
+  CHART_PATH: ./chart
+  RELEASE_NAME: spring-app
+
 jobs:
   build:
     name: Build
@@ -32,3 +37,30 @@ jobs:
 
       - name: Build and Verify with Maven
         run: mvn --batch-mode --update-snapshots clean install
+  ci:
+    name: Continuous integration
+    #if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Azure CLI Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: actions/checkout@v4
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            CONTAINER_IMAGE_NAME=$(echo $RELEASE_NAME)
+            echo container image: $CONTAINER_IMAGE_NAME, acr: $CONTAINER_REGISTRY_NAME
+            az acr build \
+              --registry "$CONTAINER_REGISTRY_NAME" \
+              --image "$CONTAINER_IMAGE_NAME" \
+              --file Dockerfile . \
+              --platform linux
