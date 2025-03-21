@@ -1,4 +1,4 @@
-name: API Deployment
+name: App Deployment
 
 on:
   push:
@@ -18,6 +18,8 @@ on:
 env:
   CONTAINER_REGISTRY_NAME: gmezanregistry001
   RELEASE_NAME: spring-app
+  AKS_RESOURCE_GROUP: rg-terraform-gh-actions-01
+  AKS_NAME: cluster-selected-hookworm
 
 jobs:
   build:
@@ -84,14 +86,14 @@ jobs:
         id: set-context
         uses: azure/aks-set-context@v3
         with:
-          resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
-          cluster-name: ${{ secrets.AKS_NAME }}
+          resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+          cluster-name: ${{ env.AKS_NAME }}
       - uses: azure/k8s-bake@v3
         id: bake
         with:
           renderEngine: 'helm'
           releaseName: ${{ env.RELEASE_NAME }}
-          namespace: ${{ env.CLUSTER_NAMESPACE }}
+          namespace: default
           helmChart: ./chart
           overrideFiles: './azure.yaml'
           overrides: |
@@ -102,4 +104,4 @@ jobs:
         with:
           action: deploy
           manifests: ${{ steps.bake.outputs.manifestsBundle }}
-          namespace: ${{ env.CLUSTER_NAMESPACE }}
+          namespace: default
