@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: spring-app
+  webflux:
+    base-path: /app
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
